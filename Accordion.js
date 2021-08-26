@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, TouchableHighlight,ViewPropTypes } from 'react-native';
+import { View, TouchableHighlight, ViewPropTypes } from 'react-native';
 import Collapsible from './Collapsible';
 
 const COLLAPSIBLE_PROPS = Object.keys(Collapsible.propTypes);
@@ -11,6 +11,7 @@ export default class SimpleAccordion extends Component {
     style: ViewPropTypes.style,
     sections: PropTypes.array.isRequired,
     renderHeader: PropTypes.func.isRequired,
+    ExtraButton: PropTypes.func.isRequired,
     renderContent: PropTypes.func.isRequired,
     renderSectionTitle: PropTypes.func,
     onChange: PropTypes.func,
@@ -131,7 +132,25 @@ export default class SimpleAccordion extends Component {
               )}
             </Touchable>
 
+            {
+              this.props.expandFromBottom &&
+              this.props.ExtraButton(
+                section,
+                key,
+                this.state.activeSection === key,
+                this.props.sections
+              )
+            }
             {!this.props.expandFromBottom && renderCollapsible(section, key)}
+            {
+              !this.props.expandFromBottom &&
+              this.props.ExtraButton(
+                section,
+                key,
+                this.state.activeSection === key,
+                this.props.sections
+              )
+            }
           </View>
         ))}
       </View>
