@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Easing, View,ViewPropTypes } from 'react-native';
+import { Easing, ViewPropTypes, View, Animated } from 'react-native';
 
 const ANIMATED_EASING_PREFIXES = ['easeInOut', 'easeOut', 'easeIn'];
 
@@ -141,6 +141,7 @@ export default class Collapsible extends Component {
       toValue: height,
       duration,
       easing,
+      useNativeDriver: false,
     }).start(() => this.setState({ animating: false }));
   }
 
@@ -159,7 +160,7 @@ export default class Collapsible extends Component {
     this.setState({ contentHeight });
   };
 
-  render() {
+  renderCollapsedData = () => {
     const { collapsed } = this.props;
     const { height, contentHeight, measuring, measured } = this.state;
     const hasKnownHeight = !measuring && (measured || collapsed);
@@ -190,18 +191,26 @@ export default class Collapsible extends Component {
         },
       ];
     }
-    return (
+    return collapsed ?
       <Animated.View style={style} pointerEvents={collapsed ? 'none' : 'auto'}>
         <Animated.View
           ref={this._handleRef}
-          style={[ contentStyle]}
+          style={[contentStyle]}
           onLayout={this.state.animating ? undefined : this._handleLayoutChange}
         >
           <View style={{ height: measured ? contentHeight : null }}>
             {this.props.children}
           </View>
         </Animated.View>
-      </Animated.View>
+      </Animated.View> :
+      <View style={{ height: measured ? contentHeight : null }}>
+        {this.props.children}
+      </View>
+  }
+
+  render() {
+    return (
+      this.renderCollapsedData()
     );
   }
 }
