@@ -29,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/sumanth234/react-native-simple-accordian/issues"
   },
-  "homepage": "https://github.com/sumanth234/react-native-simple-accordian#readme"
+  "homepage": "https://github.com/sumanth234/react-native-simple-accordian#readme",
+  "dependencies": {
+    "react-native-simple-accordion": "^1.15.0"
+  }
 }
