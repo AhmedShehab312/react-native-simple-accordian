@@ -28,6 +28,7 @@ export default class SimpleAccordion extends Component {
     touchableProps: PropTypes.object,
     disabled: PropTypes.bool,
     expandFromBottom: PropTypes.bool,
+    noCollapsible: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -36,6 +37,7 @@ export default class SimpleAccordion extends Component {
     expandFromBottom: false,
     touchableComponent: TouchableHighlight,
     renderSectionTitle: () => null,
+    noCollapsible: false,
   };
 
   constructor(props) {
@@ -47,6 +49,7 @@ export default class SimpleAccordion extends Component {
         props.activeSection !== undefined
           ? props.activeSection
           : props.initiallyActiveSection,
+      activeArr: props?.initiallyActiveSection !== undefined ? [props.initiallyActiveSection] : [],
     };
   }
 
@@ -68,6 +71,17 @@ export default class SimpleAccordion extends Component {
       }
       if (this.props.onChange) {
         this.props.onChange(activeSection);
+      }
+
+      const { activeArr } = this.state;
+      if(activeArr.includes(section)) {
+        this.setState({
+          activeArr: activeArr.filter( x => x !== section)
+        })
+      } else {
+        this.setState({
+          activeArr: [ ...activeArr, section]
+        })
       }
     }
   }
@@ -93,15 +107,17 @@ export default class SimpleAccordion extends Component {
 
     const Touchable = this.props.touchableComponent;
 
+    const isActive = (key) =>  this.props.noCollapsible ? this.state.activeArr.includes(key) : this.state.activeSection === key
+
     const renderCollapsible = (section, key) => (
       <Collapsible
-        collapsed={this.state.activeSection !== key}
+        collapsed={!isActive(key)}
         {...collapsibleProps}
       >
         {this.props.renderContent(
           section,
           key,
-          this.state.activeSection === key,
+          isActive(key),
           this.props.sections
         )}
       </Collapsible>
@@ -127,7 +143,7 @@ export default class SimpleAccordion extends Component {
               {this.props.renderHeader(
                 section,
                 key,
-                this.state.activeSection === key,
+                isActive(key),
                 this.props.sections
               )}
             </Touchable>
@@ -137,7 +153,7 @@ export default class SimpleAccordion extends Component {
               this.props.ExtraButton(
                 section,
                 key,
-                this.state.activeSection === key,
+                isActive(key),
                 this.props.sections
               )
             }
@@ -147,7 +163,7 @@ export default class SimpleAccordion extends Component {
               this.props.ExtraButton(
                 section,
                 key,
-                this.state.activeSection === key,
+                isActive(key),
                 this.props.sections
               )
             }
